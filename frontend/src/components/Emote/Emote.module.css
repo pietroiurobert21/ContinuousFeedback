@@ -1,0 +1,14 @@
+.emoteContainer {
+    width: 20rem;
+    height: 10rem;
+    border-radius: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.6;
+}
+
+.emoteContainer:hover {
+    cursor: pointer;
+    opacity: 1;
+}
