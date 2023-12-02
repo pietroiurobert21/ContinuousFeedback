@@ -7,6 +7,7 @@ import Login from './pages/Login/Login'
 import Register from './pages/Register/Register'
 import Teacher from './pages/Teacher/Teacher'
 
+
 function App() {
   return (
     <Router>
