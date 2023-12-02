@@ -41,6 +41,7 @@ app.post('/register', async (req, res) => {
   try {
     const user = await User.create({ email, password });  // Create a new user
 
+    
     delete user.dataValues.password;  // Delete the password from the returned object so it doesn't get sent to the client
     res.status(201).json({success: true, message: 'Successfully registered'})  // Send the new user back as JSON
   } catch (error) {
