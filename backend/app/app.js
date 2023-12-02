@@ -1,9 +1,14 @@
 const express = require('express');
 const cors = require('cors');
+const dotenv = require('dotenv');
 const app = express();
 
-app.use(cors({origin: 'http://127.0.0.1:5173'}));
+dotenv.config();
+app.use(cors({origin: 'http://localhost:5173'}));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
+
+// const expressOasGenerator = require('express-oas-generator')
+// expressOasGenerator.init(app, {});
 
 module.exports = app;
