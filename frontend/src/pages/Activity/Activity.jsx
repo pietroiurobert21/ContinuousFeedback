@@ -53,6 +53,7 @@ const Activity = () => {
         }
         const responseData = await response.json();
         console.log(responseData);
+        navigate('/Teacher');
     };
 
     return (

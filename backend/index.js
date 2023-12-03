@@ -39,6 +39,20 @@ app.get('/my-profile', authenticate, async (req, res) => {
   }
 });
 
+app.get('/my-activities', authenticate, async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const activities = await Activity.findAll({ 
+      where: { 
+        userId
+      }
+    });  // Find the user with the given username
+    res.status(200).json(activities);  // Send the user back as JSON
+  } catch (error) {
+    handleErrorResponse(res, error, 'Activities not found')
+  }
+});
+
 app.get('/users', authenticate , async (req, res) => {
   try {
       const users = await User.findAll();
@@ -63,6 +77,26 @@ app.get('/activities', authenticate , async (req, res) => {
   }
 });
 
+app.get('/activity/:code', async (req, res) => {
+  const code = req.params.code;
+  console.log(code)
+  try {
+      const activity = await Activity.findOne({ 
+        where: { 
+          code: code
+        }
+      });
+      if (!activity) {  
+        res.status(404).json({success:"false", message:'Activity not found' })
+       }
+      else
+      res.status(200).json(activity); 
+
+  } catch (error) {
+    handleErrorResponse(res, error, 'Activity not found')
+  }
+});
+
 app.post('/activities/:userId', authenticate , async (req, res) => {
   const userId = req.params.userId;
   const { code, name } = req.body;
@@ -78,9 +112,6 @@ app.post('/register', async (req, res) => {
   const { email, password } = req.body;  // Get the username and password from the request body
   try {
     const user = await User.create({ email, password });  // Create a new user
-
-    
-
     delete user.dataValues.password;  // Delete the password from the returned object so it doesn't get sent to the client
     res.status(201).json({success: true, message: 'Successfully registered'})  // Send the new user back as JSON
   } catch (error) {

@@ -1,0 +1,10 @@
+.activitiesContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    width: 50rem;
+    height: 35rem;
+    background-color: rgba(36, 141, 232, .2);
+    overflow-y: scroll;
+}
