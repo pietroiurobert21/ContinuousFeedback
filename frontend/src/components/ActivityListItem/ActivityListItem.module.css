@@ -1,0 +1,13 @@
+.listItem {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: rgba(128, 255, 212, .2);
+    width: 98%;
+    margin-top: 1%;
+}
+
+.listItem:hover {
+    background-color: rgba(128, 255, 212, .4);
+    cursor: pointer;
+}

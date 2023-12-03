@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import jwt from 'jsonwebtoken';
+import style from './Teacher.module.css';
+import ActivityListItem from '../../components/ActivityListItem/ActivityListItem';
 
 const Teacher = () => {
     const [isLoading, setIsLoading] = useState(true);
-    const [userData, setuserData] = useState([]);
-    
+    const [userData, setuserData] = useState();
+    const [activities, setActivities] = useState([]);
+
     const navigate = useNavigate();
 
 
@@ -14,30 +16,41 @@ const Teacher = () => {
         navigate('/Login');
     }; 
 
-    // const retrieveIdFromToken = (token) => {
-    //     try {
-    //         const decodedToken = jwt.verify(token, 'your-secret-key'); 
-    //         return decodedToken.id;
-    //     } catch (error) {
-    //         console.error('Error decoding token:', error);
-    //         return null;
-    //     }
-    // };
-
-    const retrieveData = async () => {
-        const token = localStorage.getItem('token');
-        const id = retrieveIdFromToken(token);  // !!!! todo
-
-        fetch(`http://localhost:3000/users/${id}`, {
+    const retrieveUserData = async (token) => {
+        const userData = await fetch('http://localhost:3000/my-profile', {
+            method: 'GET',
             headers: {
-                content_type: 'application/json',
                 Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
         })
-            .then((response) => response.json())
-            .then((data) => {
-                setuserData(data); setIsLoading(false);
-            });
+
+        if (!userData.ok) {
+            console.log('Failed to retrieve data');
+            return
+        }
+
+        const data = await userData.json();
+        setIsLoading(false);
+        setuserData(data);
+        console.log(data);
+    };
+
+    const retrieveActivities = async (token) => {
+        const activities = await fetch('http://localhost:3000/my-activities', {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        }) 
+        if (!activities.ok) {
+            console.log('Failed to retrieve activities');
+            return
+        }
+        const data = await activities.json();
+        setActivities(data);
+        console.log(data)
     };
 
     useEffect(() => {
@@ -45,16 +58,44 @@ const Teacher = () => {
         if (!token) {
             navigate('/Login');
         } else {
-            retrieveData();
+            retrieveUserData(token);
+            retrieveActivities(token);
         }
     }, []);
+
+
+    const newActivity = async () => {
+        // TODO: create new activity
+        navigate('/Activity');
+    };
 
     return (
         <div>
                 { 
-                    isLoading && <p> Loading... </p>
+                    isLoading ? ( <p> Loading... </p> ) : (     
+                <>
+                    <p> User email: {userData.email} </p> 
+                    
+                    <div className={style.activitiesContainer}>
+                        {activities.length === 0 && <p> You have no activities </p>}
+                        {
+                            activities.map((activity, index) => (
+                                <ActivityListItem
+                                    key={index}
+                                    id={activity.id}
+                                    nume={activity.name}
+                                    cod={activity.code}
+                                />
+                            ))
+                        }
+                    
+                    </div>
+                    
+                    <button onClick={newActivity}>  Create new activity  </button>                    
+                    <button onClick={logout}>  Logout  </button>             
+                </>
+                    )
                 }
-            <button onClick={logout}>  Logout  </button>
         </div>
     )
 }
