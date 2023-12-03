@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const port = 3000;
 
 const User = require('./database/models/User.js');
+const Activity = require('./database/models/Activity.js');
+User.hasMany(Activity, { foreignKey: 'userId' });
 
 const handleErrorResponse = (res, error, message) => { 
   console.error(`Error: ${message}`, error); 
@@ -51,6 +53,27 @@ app.get('/users', authenticate , async (req, res) => {
   }
 });
 
+app.get('/activities', authenticate , async (req, res) => {
+  try {
+      const activities = await Activity.findAll();
+      res.status(200).json(activities); 
+
+  } catch (error) {
+    handleErrorResponse(res, error, 'Activities not found')
+  }
+});
+
+app.post('/activities/:userId', authenticate , async (req, res) => {
+  const userId = req.params.userId;
+  const { code, name } = req.body;
+  try {
+      const activity = await Activity.create({code, name, userId});
+      res.status(200).json(activity); 
+  } catch (error) {
+    handleErrorResponse(res, error, 'Activity not created')
+  }
+});
+
 app.post('/register', async (req, res) => {
   const { email, password } = req.body;  // Get the username and password from the request body
   try {
@@ -86,7 +109,7 @@ app.post('/login', async (req, res) => {
       }
     });  // Find the user with the given username
     if (!user) {  
-      handleErrorResponse(res, error, 'User not found')
+     res.status(404).json({success:"false", message:'User not found' })
     }
     else {      
       const isMatch = await user.verifyPassword(password);  // Verify the password
