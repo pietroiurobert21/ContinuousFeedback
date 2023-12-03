@@ -14,13 +14,28 @@ const handleErrorResponse = (res, error, message) => {
 const authenticate = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader?.split(' ')[1];
-  if (token == null) return res.sendStatus(401)
+  if (token == null) return res.sendStatus(401) 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     if (err) return res.sendStatus(403)
-    req.user = user;
+    req.user = user; 
     next();
   });
 };
+
+app.get('/my-profile', authenticate, async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const user = await User.findOne({ 
+      where: { 
+        id: userId
+      }
+    });  // Find the user with the given username
+    delete user.dataValues.password;
+    res.status(200).json(user);  // Send the user back as JSON
+  } catch (error) {
+    handleErrorResponse(res, error, 'User not found')
+  }
+});
 
 app.get('/users', authenticate , async (req, res) => {
   try {
@@ -89,7 +104,6 @@ app.post('/login', async (req, res) => {
     handleErrorResponse(res, error, 'User not found')
   }
 });
-
 
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
