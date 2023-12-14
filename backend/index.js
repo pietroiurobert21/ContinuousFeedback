@@ -77,6 +77,9 @@ app.get('/activities', authenticate , async (req, res) => {
   }
 });
 
+
+
+
 app.get('/activity/:code', async (req, res) => {
   const code = req.params.code;
   console.log(code)
