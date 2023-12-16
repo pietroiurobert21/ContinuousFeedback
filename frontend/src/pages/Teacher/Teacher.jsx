@@ -77,6 +77,15 @@ const Teacher = () => {
                     <p> User email: {userData.email} </p> 
                     
                     <div className={style.activitiesContainer}>
+                        <ActivityListItem
+                                    id={"ID"}
+                                    nume={"NAME"}
+                                    cod={"CODE"}
+                                    emoji_1={"EMOJI 1"}
+                                    emoji_2={"EMOJI 2"}
+                                    emoji_3={"EMOJI 3"}
+                                    emoji_4={"EMOJI 4"}
+                                />
                         {activities.length === 0 && <p> You have no activities </p>}
                         {
                             activities.map((activity, index) => (
@@ -85,6 +94,10 @@ const Teacher = () => {
                                     id={activity.id}
                                     nume={activity.name}
                                     cod={activity.code}
+                                    emoji_1={activity.emoji_1_count}
+                                    emoji_2={activity.emoji_2_count}
+                                    emoji_3={activity.emoji_3_count}
+                                    emoji_4={activity.emoji_4_count}
                                 />
                             ))
                         }
