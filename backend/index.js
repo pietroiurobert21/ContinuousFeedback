@@ -3,11 +3,13 @@ const jwt = require('jsonwebtoken');
 
 const port = 3000;
 
+// Database connection
 const User = require('./database/models/User.js');
 const Activity = require('./database/models/Activity.js');
 const e = require('express');
 User.hasMany(Activity, { foreignKey: 'userId' });
 
+// Error response handler
 const handleErrorResponse = (res, error, message) => { 
   console.error(`Error: ${message}`, error); 
   return res.status(500).json({ success: false, message: `Error ${message}.` }); 
@@ -25,6 +27,7 @@ const authenticate = (req, res, next) => {
   });
 };
 
+// Get all activities of a user
 app.get('/my-profile', authenticate, async (req, res) => {
   const userId = req.user.id;
   try {
@@ -40,6 +43,7 @@ app.get('/my-profile', authenticate, async (req, res) => {
   }
 });
 
+// Get all activities of a user
 app.get('/my-activities', authenticate, async (req, res) => {
   const userId = req.user.id;
   try {
@@ -54,6 +58,7 @@ app.get('/my-activities', authenticate, async (req, res) => {
   }
 });
 
+// Get all users
 app.get('/users', authenticate , async (req, res) => {
   try {
       const users = await User.findAll();
@@ -68,6 +73,7 @@ app.get('/users', authenticate , async (req, res) => {
   }
 });
 
+// Get all activities
 app.get('/activities', authenticate , async (req, res) => {
   try {
       const activities = await Activity.findAll();
@@ -78,6 +84,8 @@ app.get('/activities', authenticate , async (req, res) => {
   }
 });
 
+
+// Get a user by username
 app.get('/activity/:code', async (req, res) => {
   const code = req.params.code;
   console.log(code)
@@ -98,6 +106,8 @@ app.get('/activity/:code', async (req, res) => {
   }
 });
 
+
+// Create a new activity
 app.post('/activities/:userId', authenticate , async (req, res) => {
   const userId = req.params.userId;
   const { code, name } = req.body;
@@ -109,6 +119,8 @@ app.post('/activities/:userId', authenticate , async (req, res) => {
   }
 });
 
+
+// Register route
 app.post('/register', async (req, res) => {
   const { email, password } = req.body;  // Get the username and password from the request body
   try {
@@ -122,6 +134,8 @@ app.post('/register', async (req, res) => {
   }
 });
 
+
+// Get a user by username
 app.get('/users/:id', authenticate, async (req, res) => {
   const user = await User.findOne({ 
     where: { 
@@ -132,6 +146,8 @@ app.get('/users/:id', authenticate, async (req, res) => {
   res.status(200).json(user);  // Send the user back as JSON
 });
 
+
+// Login route
 app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;  // Get the username and password from the request body
