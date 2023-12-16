@@ -6,6 +6,10 @@ const ActivityListItem = (props) => {
             <p> {props.id} </p>
             <p> {props.nume} </p>
             <p> {props.cod} </p>
+            <p> {props.emoji_1} </p>
+            <p> {props.emoji_2} </p>
+            <p> {props.emoji_3} </p>
+            <p> {props.emoji_4} </p>
         </div>
     );
 };

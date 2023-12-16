@@ -5,6 +5,7 @@ const port = 3000;
 
 const User = require('./database/models/User.js');
 const Activity = require('./database/models/Activity.js');
+const e = require('express');
 User.hasMany(Activity, { foreignKey: 'userId' });
 
 const handleErrorResponse = (res, error, message) => { 
@@ -76,9 +77,6 @@ app.get('/activities', authenticate , async (req, res) => {
     handleErrorResponse(res, error, 'Activities not found')
   }
 });
-
-
-
 
 app.get('/activity/:code', async (req, res) => {
   const code = req.params.code;
@@ -161,6 +159,37 @@ app.post('/login', async (req, res) => {
     handleErrorResponse(res, error, 'User not found')
   }
 });
+
+
+
+
+
+// emoji_count_incrementation
+app.post('/emoji_count_incrementation/:id', async (req, res) => {
+  const id = req.params.id;
+  const emoji = req.body.emoji;
+  try {
+    const activity = await Activity.findOne({ 
+      where: { 
+        id: id
+      }
+    });  // Find the user with the given username
+    if (emoji == 1)
+      activity.emoji_1_count += 1;
+    else if (emoji == 2)
+      activity.emoji_2_count += 1;
+    else if (emoji == 3)
+      activity.emoji_3_count += 1;
+    else 
+      activity.emoji_4_count += 1;
+    await activity.save();
+    res.status(200).json(activity);  // Send the user back as JSON
+  } catch (error) {
+    handleErrorResponse(res, error, 'Activity not found')
+  }
+});
+
+
 
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
