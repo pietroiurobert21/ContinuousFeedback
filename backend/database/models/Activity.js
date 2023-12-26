@@ -26,6 +26,11 @@ const Activity = sequelize.define('Activity', {
             key: 'id',
         },
     },
+    isActive: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    },
 }, { timestamps: false });
 
 module.exports = Activity;
