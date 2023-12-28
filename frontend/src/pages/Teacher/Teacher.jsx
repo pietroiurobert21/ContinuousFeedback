@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Table, Menu, Popover, Position, Button, toaster } from 'evergreen-ui'
+import { Table, Menu, Popover, Position, Button, toaster, Combobox } from 'evergreen-ui'
 
 import style from './Teacher.module.css';
 
@@ -56,6 +56,14 @@ const Teacher = () => {
         console.log(data)
     };
 
+    const active_not_active = async(value) => {
+        if (value === 'true') {
+            // todo - change to true
+        } else {
+            // todo - change to false
+        }
+    }   
+
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -105,15 +113,18 @@ const Teacher = () => {
                                     navigator.clipboard.writeText(activity.code);
                                     toaster.success('Code copied to clipboard', { duration: 1.5 });
                                 }}>
-                                    <Table.TextCell width="auto">{activity.id}</Table.TextCell>
+                                    <Table.TextCell>{activity.id}</Table.TextCell>
                                     <Table.TextCell>{activity.name}</Table.TextCell>
                                     <Table.TextCell>{activity.code}</Table.TextCell>
                                     <Table.TextCell>{activity.emoji_1_count}</Table.TextCell>
                                     <Table.TextCell>{activity.emoji_2_count}</Table.TextCell>
                                     <Table.TextCell>{activity.emoji_3_count}</Table.TextCell>
                                     <Table.TextCell>{activity.emoji_4_count}</Table.TextCell>
-                                    <Table.TextCell>{activity.isActive.toString()}</Table.TextCell>
-                                    <Table.TextCell isNumber>{}</Table.TextCell>
+                                    <Table.TextCell>
+                                        <Combobox width="8vw" height="auto" initialSelectedItem={activity.isActive.toString()} 
+                                            items={['true', 'false']} onChange={(selected) => {active_not_active(selected)}}
+                                        />
+                                    </Table.TextCell>
                                  </Table.Row>
                             ))}
                         </Table.Body>
