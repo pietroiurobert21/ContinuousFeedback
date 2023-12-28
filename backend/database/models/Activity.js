@@ -18,6 +18,26 @@ const Activity = sequelize.define('Activity', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    emoji_1_count: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    },
+    emoji_2_count: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    },
+    emoji_3_count: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    },
+    emoji_4_count: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    },
     userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
