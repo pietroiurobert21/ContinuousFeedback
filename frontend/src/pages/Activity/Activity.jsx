@@ -2,8 +2,12 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
+import { Button, TextInput, toaster } from 'evergreen-ui';
+
+import style from '../Login/Login.module.css';
+
 const Activity = () => {
-    const [activityData, setActivityData] = useState({"code": "", "name": ""});
+    const [activityName, setActivityName] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -32,12 +36,12 @@ const Activity = () => {
     };
 
 
-    const startNewActivity = async () => {
+    const createNewActivity = async () => {
         const token = localStorage.getItem('token');
         const userData = await retrieveData(token);
         console.log("user data:" , userData)
         const id = userData.id;
-        console.log("activity data:" , activityData)
+        console.log("activity data:" , activityName)
 
         const response = await fetch(`http://localhost:3000/activities/${id}`, {
             method: 'POST',
@@ -45,27 +49,29 @@ const Activity = () => {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
             },
-            body : JSON.stringify(activityData)
+            body : JSON.stringify({name: activityName})
         });
-        if (!response.ok) {
-            console.log('Failed to create activity');
-            return
-        }
         const responseData = await response.json();
-        console.log(responseData);
-        navigate('/Teacher');
+
+        if (response.status !== 200) {
+            toaster.danger('Failed to create activity', { description: responseData.message, duration: 1.5 });
+            return
+        } else {
+            toaster.success('Activity created successfully', { duration: 1.5 });
+            navigate('/Teacher');
+        }
+    
     };
 
     return (
         <div>
-            <input type="text" placeholder="Activity name" onChange={
-                (e) => { setActivityData(prevState=>({...prevState, name: e.target.value})) }
-            }/>
-            <input type="text" placeholder="Activity code" onChange={
-                (e) => { setActivityData(prevState=>({...prevState, code: e.target.value})) }
-            }/>
-            <p> Duration <input type="time" placeholder="Duration"/>  </p>
-            <button onClick={startNewActivity}> Start activity and generate code </button>
+            <div className={style.loginCard}>
+            <h5> New activity </h5>
+            <TextInput style={{width: "40vh", marginBottom: "1vh"}} placeholder="Activity Name" onChange={
+                (e) => setActivityName(e.target.value)}/>
+
+            <Button style={{width: "40vh", marginBottom: "0"}} appearance='primary' intent='success' onClick={createNewActivity}> Create a new activity </Button>
+            </div>
         </div>
     );    
 };

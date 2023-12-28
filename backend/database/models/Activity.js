@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const sequelize = require('../db.js');
 const { DataTypes } = require('sequelize');
 const User = require('./User.js');
+const { v4: uuidv4 } = require('uuid');
 
 const Activity = sequelize.define('Activity', {
     id: {
@@ -13,6 +14,7 @@ const Activity = sequelize.define('Activity', {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
+        defaultValue: () => uuidv4(), 
     },
     name: {
         type: DataTypes.STRING,
@@ -45,6 +47,11 @@ const Activity = sequelize.define('Activity', {
             model: User,
             key: 'id',
         },
+    },
+    isActive: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
     },
 }, { timestamps: false });
 

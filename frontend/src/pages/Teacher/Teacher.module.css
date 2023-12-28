@@ -8,3 +8,22 @@
     background-color: rgba(36, 141, 232, .2);
     overflow-y: scroll;
 }
+
+.avatar {
+    width: 4rem;
+    height: 4rem;
+    margin: 0 1rem;
+    border-radius: 50%;
+    position: fixed;
+    z-index: 1;
+    left: 90%;
+}
+
+.avatar:hover {
+    cursor: pointer;
+}
+
+.teacherContainer {
+    margin-left: 5rem;
+    margin-right: 5rem;
+}
