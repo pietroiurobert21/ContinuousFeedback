@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import style from './Teacher.module.css';
-import ActivityListItem from '../../components/ActivityListItem/ActivityListItem';
+import { Table } from 'evergreen-ui'
 
 const Teacher = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -24,20 +23,21 @@ const Teacher = () => {
                 'Content-Type': 'application/json'
             }
         })
-
         if (!userData.ok) {
             console.log('Failed to retrieve data');
             return
         }
 
         const data = await userData.json();
+        localStorage.setItem('ID', data.id);
+
         setIsLoading(false);
         setuserData(data);
         console.log(data);
     };
 
     const retrieveActivities = async (token) => {
-        const activities = await fetch('http://localhost:3000/my-activities', {
+        const activities = await fetch(`http://localhost:3000/my-activities/${localStorage.getItem('ID')}`, {
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -49,6 +49,7 @@ const Teacher = () => {
             return
         }
         const data = await activities.json();
+        console.log(data);
         setActivities(data);
         console.log(data)
     };
@@ -76,33 +77,33 @@ const Teacher = () => {
                 <>
                     <p> User email: {userData.email} </p> 
                     
-                    <div className={style.activitiesContainer}>
-                        <ActivityListItem
-                                    id={"ID"}
-                                    nume={"NAME"}
-                                    cod={"CODE"}
-                                    emoji_1={"EMOJI 1"}
-                                    emoji_2={"EMOJI 2"}
-                                    emoji_3={"EMOJI 3"}
-                                    emoji_4={"EMOJI 4"}
-                                />
-                        {activities.length === 0 && <p> You have no activities </p>}
-                        {
-                            activities.map((activity, index) => (
-                                <ActivityListItem
-                                    key={index}
-                                    id={activity.id}
-                                    nume={activity.name}
-                                    cod={activity.code}
-                                    emoji_1={activity.emoji_1_count}
-                                    emoji_2={activity.emoji_2_count}
-                                    emoji_3={activity.emoji_3_count}
-                                    emoji_4={activity.emoji_4_count}
-                                />
-                            ))
-                        }
-                    
-                    </div>
+                    <Table style={{width:"90vw", height:"80vh"}}>
+                        <Table.Head>
+                            <Table.TextHeaderCell>ID</Table.TextHeaderCell>
+                            <Table.TextHeaderCell>NAME</Table.TextHeaderCell>
+                            <Table.TextHeaderCell>CODE</Table.TextHeaderCell>
+                            <Table.TextHeaderCell>EM1</Table.TextHeaderCell>
+                            <Table.TextHeaderCell>EM2</Table.TextHeaderCell>
+                            <Table.TextHeaderCell>EM3</Table.TextHeaderCell>
+                            <Table.TextHeaderCell>EM4</Table.TextHeaderCell>
+                            <Table.TextHeaderCell>ACTIVE</Table.TextHeaderCell>
+                        </Table.Head>
+                        <Table.Body height={240}>
+                            {activities.map((activity, index) => (
+                                <Table.Row key={index} isSelectable onSelect={() => alert("profile.name")}>
+                                    <Table.TextCell>{activity.id}}</Table.TextCell>
+                                    <Table.TextCell>{activity.name}</Table.TextCell>
+                                    <Table.TextCell>{activity.code}</Table.TextCell>
+                                    <Table.TextCell>{activity.emoji_1_count}</Table.TextCell>
+                                    <Table.TextCell>{activity.emoji_2_count}</Table.TextCell>
+                                    <Table.TextCell>{activity.emoji_3_count}</Table.TextCell>
+                                    <Table.TextCell>{activity.emoji_4_count}</Table.TextCell>
+                                    <Table.TextCell>{activity.isActive.toString()}</Table.TextCell>
+                                    <Table.TextCell isNumber>{}</Table.TextCell>
+                                 </Table.Row>
+                            ))}
+                        </Table.Body>
+                     </Table>
                     
                     <button onClick={newActivity}>  Create new activity  </button>                    
                     <button onClick={logout}>  Logout  </button>             

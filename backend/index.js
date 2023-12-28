@@ -44,8 +44,8 @@ app.get('/my-profile', authenticate, async (req, res) => {
 });
 
 // Get all activities of a user
-app.get('/my-activities', authenticate, async (req, res) => {
-  const userId = req.user.id;
+app.get('/my-activities/:userId', authenticate, async (req, res) => {
+  const userId = req.params.userId;
   try {
     const activities = await Activity.findAll({ 
       where: { 
@@ -199,12 +199,30 @@ app.post('/emoji_count_incrementation/:id', async (req, res) => {
     else 
       activity.emoji_4_count += 1;
     await activity.save();
-    res.status(200).json(activity);  // Send the user back as JSON
+    res.status(200).json(activity); 
   } catch (error) {
     handleErrorResponse(res, error, 'Activity not found')
   }
 });
 
+
+
+// activate an activity
+app.post('/activate_activity/:id', async (req, res) => {
+  const id = req.params.id;
+  try {
+    const activity = await Activity.findOne({ 
+      where: { 
+        id: id
+      }
+    });
+    activity.isActive = true;
+    await activity.save();
+    res.status(200).json({message: "activity is active", activity}); 
+  } catch (error) {
+    handleErrorResponse(res, error, 'Activity not found')
+  }
+})
 
 
 app.listen(port, () => {

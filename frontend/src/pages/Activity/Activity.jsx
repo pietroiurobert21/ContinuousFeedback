@@ -64,8 +64,7 @@ const Activity = () => {
             <input type="text" placeholder="Activity code" onChange={
                 (e) => { setActivityData(prevState=>({...prevState, code: e.target.value})) }
             }/>
-            <p> Duration <input type="time" placeholder="Duration"/>  </p>
-            <button onClick={startNewActivity}> Start activity and generate code </button>
+            <button onClick={startNewActivity}> Create activity and generate code </button>
         </div>
     );    
 };

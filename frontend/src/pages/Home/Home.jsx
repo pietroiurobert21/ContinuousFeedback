@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Home.module.css';
-import styles2 from '../../index.module.css';
-import styles3 from '../../App.module.css';
 
 const Home = () => {
     const navigate = useNavigate();
