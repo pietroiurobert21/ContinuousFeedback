@@ -20,8 +20,8 @@ const Home = () => {
         const activityData = await activity.json();
 
         if (!activity.ok || !activityData.isActive) {
-            console.log('Failed to join activity or activity is not active');
-            setErrorPopup(true);
+           alert('Failed to join activity or activity is not active');
+            //setErrorPopup(true);
             return;
         }
 
@@ -39,12 +39,12 @@ const Home = () => {
 
             <p> create your own class for free <a href="" onClick={() => navigate("/Login")}> here </a> </p>
 
-            {errorPopup && (
+            {/* {errorPopup && (
                 <div className={styles.errorPopup}>
                     <p>Failed to join activity or activity is not active</p>
                     <button onClick={closePopup}>Delete notification</button>
                 </div>
-            )}
+            )} */}
         </>
     );
 };
