@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Table } from 'evergreen-ui'
+import { Table, Menu, Popover, Position, Button, toaster } from 'evergreen-ui'
+
+import style from './Teacher.module.css';
 
 const Teacher = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -64,20 +66,29 @@ const Teacher = () => {
         }
     }, []);
 
-
-    const newActivity = async () => {
-        // TODO: create new activity
-        navigate('/Activity');
-    };
-
     return (
-        <div>
+        <div className={style.teacherContainer}>
                 { 
                     isLoading ? ( <p> Loading... </p> ) : (     
                 <>
+                    <Popover position={Position.BOTTOM_LEFT} content={
+                        <Menu>
+                            <Menu.Group>
+                                <Menu.Item icon="person" onSelect={() => {}}>Profile</Menu.Item>
+                                <Menu.Item icon="cog" onSelect={() => {}}>Settings</Menu.Item>
+                            </Menu.Group>
+                            <Menu.Divider />
+                            <Menu.Group>
+                                <Menu.Item icon="log-out" intent="danger" onSelect={logout}>Log Out</Menu.Item>
+                            </Menu.Group>
+                        </Menu>
+                        }>
+                        <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" className={style.avatar}/>
+                    </Popover>
+
                     <p> User email: {userData.email} </p> 
                     
-                    <Table style={{width:"90vw", height:"80vh"}}>
+                    <Table style={{width:"90vw", height:"70vh", paddingTop: "0"}}>
                         <Table.Head>
                             <Table.TextHeaderCell>ID</Table.TextHeaderCell>
                             <Table.TextHeaderCell>NAME</Table.TextHeaderCell>
@@ -90,8 +101,11 @@ const Teacher = () => {
                         </Table.Head>
                         <Table.Body height={240}>
                             {activities.map((activity, index) => (
-                                <Table.Row key={index} isSelectable onSelect={() => alert("profile.name")}>
-                                    <Table.TextCell>{activity.id}}</Table.TextCell>
+                                <Table.Row key={index} isSelectable onSelect={() => {
+                                    navigator.clipboard.writeText(activity.code);
+                                    toaster.success('Code copied to clipboard', { duration: 1.5 });
+                                }}>
+                                    <Table.TextCell width="auto">{activity.id}</Table.TextCell>
                                     <Table.TextCell>{activity.name}</Table.TextCell>
                                     <Table.TextCell>{activity.code}</Table.TextCell>
                                     <Table.TextCell>{activity.emoji_1_count}</Table.TextCell>
@@ -105,8 +119,7 @@ const Teacher = () => {
                         </Table.Body>
                      </Table>
                     
-                    <button onClick={newActivity}>  Create new activity  </button>                    
-                    <button onClick={logout}>  Logout  </button>             
+                     <Button style={{width: "40vh", marginBottom: "0"}} appearance='primary' intent='success' onClick={()=>{navigate('/activity')}}>  Create new activity  </Button>
                 </>
                     )
                 }

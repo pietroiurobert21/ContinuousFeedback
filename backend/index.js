@@ -110,12 +110,16 @@ app.get('/activity/:code', async (req, res) => {
 // Create a new activity
 app.post('/activities/:userId', authenticate , async (req, res) => {
   const userId = req.params.userId;
-  const { code, name } = req.body;
+  const { name } = req.body;
+  if (!name) {
+    res.status(400).json({ success: false, message: 'Missing fields' });
+    return
+  }
   try {
-      const activity = await Activity.create({code, name, userId});
+      const activity = await Activity.create({name, userId});
       res.status(200).json(activity); 
   } catch (error) {
-    handleErrorResponse(res, error, 'Activity not created')
+    handleErrorResponse(res, error, `Error creating activity ${name}.`)
   }
 });
 
@@ -123,6 +127,10 @@ app.post('/activities/:userId', authenticate , async (req, res) => {
 // Register route
 app.post('/register', async (req, res) => {
   const { email, password } = req.body;  // Get the username and password from the request body
+  if (!email || !password) {
+    res.status(400).json({ success: false, message: 'Missing fields' });
+    return
+  }
   try {
     const user = await User.create({ email, password });  // Create a new user
     delete user.dataValues.password;  // Delete the password from the returned object so it doesn't get sent to the client
@@ -149,8 +157,12 @@ app.get('/users/:id', authenticate, async (req, res) => {
 
 // Login route
 app.post('/login', async (req, res) => {
+  const { email, password } = req.body;  // Get the username and password from the request body
+  if (!email || !password) {
+    res.status(400).json({ success: false, message: 'Missing email or password' });
+    return
+  }
   try {
-    const { email, password } = req.body;  // Get the username and password from the request body
     const user = await User.findOne({ 
       where: { 
         email

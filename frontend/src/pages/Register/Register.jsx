@@ -1,6 +1,9 @@
 import { useNavigate } from 'react-router-dom'
-import styles from '../Home/Home.module.css';   
+import style from '../Login/Login.module.css';
 import { useState } from 'react';
+
+import { Button, TextInput, toaster } from 'evergreen-ui';
+import backgroundImg from '../../assets/background.jpg';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -10,8 +13,12 @@ const Login = () => {
     const navigate = useNavigate();
 
     const register = async () => {
+        if (confirmPassword === '') {
+            toaster.danger('Error', { description: 'Please confirm your password' })
+            return;
+        }
         if (password !== confirmPassword) {
-            alert("Password and confirm password does not match");
+            toaster.danger('Error', { description: 'Passwords do not match' })
             return;
         }
 
@@ -23,21 +30,27 @@ const Login = () => {
             body: JSON.stringify({ email: email, password: password }),
         }).catch((err) => console.log(err));
         const response = await data.json();
-
-        alert(response.message)
-
+        
         if (response.success) {
-            navigate('/Teacher');
+            toaster.success('Success', { description: response.message })
+            navigate('/Login');
+        } else {
+            toaster.danger('Error', { description: response.message })
         }
     };
 
     return (
         <>
-            <p> Email: <input type="text" name="email" onChange={(e)=>{setEmail(e.target.value)}}/></p>
-            <p> Password:  <input type="text" name="password" onChange={(e)=>{setPassword(e.target.value)}}/></p>
-            <p> Confirm password:  <input type="text" name="cfpassword" onChange={(e)=>{setConfirmPassword(e.target.value)}}/></p>
-
-            <button className={styles.button} onClick={register}> Register </button>
+            <img src={backgroundImg} id={style.background}/>
+            <div className={style.loginCard}>
+                <h5> Register </h5>
+                <TextInput style={{width: "40vh", marginBottom: "1vh"}} placeholder="Email" onChange={(e)=>setEmail(e.target.value)}/>
+                <TextInput style={{width: "40vh", marginBottom: "1vh"}} placeholder="Password" type="password" onChange={(e)=>setPassword(e.target.value)}/>
+                <TextInput style={{width: "40vh", marginBottom: "1vh"}} placeholder="Confirm Password" type="password" onChange={(e)=>setConfirmPassword(e.target.value)}/>
+        
+                <Button style={{width: "40vh", marginBottom: "0"}} appearance='primary' intent='success' onClick={register}> Register </Button>
+                <Button style={{width: "40vh"}} appearance='default' intent='danger' onClick={()=>{navigate('/Login')}}> Cancel </Button>
+            </div>
         </>
     );
 };
