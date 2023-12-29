@@ -133,14 +133,14 @@ const Teacher = () => {
                             <Table.TextHeaderCell>ID</Table.TextHeaderCell>
                             <Table.TextHeaderCell>NAME</Table.TextHeaderCell>
                             <Table.TextHeaderCell>CODE</Table.TextHeaderCell>
-                            <Table.TextHeaderCell>EM1</Table.TextHeaderCell>
-                            <Table.TextHeaderCell>EM2</Table.TextHeaderCell>
-                            <Table.TextHeaderCell>EM3</Table.TextHeaderCell>
-                            <Table.TextHeaderCell>EM4</Table.TextHeaderCell>
+                            <Table.TextHeaderCell>EM1 count</Table.TextHeaderCell>
+                            <Table.TextHeaderCell>EM2 count</Table.TextHeaderCell>
+                            <Table.TextHeaderCell>EM3 count</Table.TextHeaderCell>
+                            <Table.TextHeaderCell>EM4 count</Table.TextHeaderCell>
                             <Table.TextHeaderCell>ACTIVE</Table.TextHeaderCell>
                             <Table.TextHeaderCell>LOGS</Table.TextHeaderCell>
                         </Table.Head>
-                        <Table.Body height={240}>
+                        <Table.Body style={{height:"65vh"}}>
                             {activities.map((activity, index) => (
                                 <Table.Row key={index} isSelectable onSelect={() => {
                                     navigator.clipboard.writeText(activity.code);

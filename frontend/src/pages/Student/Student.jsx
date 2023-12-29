@@ -5,23 +5,33 @@ import Emote from "../../components/Emote/Emote"
 import styles from './Student.module.css'
 
 import { toaster } from 'evergreen-ui'
+import { useNavigate } from "react-router-dom"
 
 const Student = () => {
+    const navigate = useNavigate()
+
     const location = useLocation()
     const activityData = location.state.activityData
 
     const increment_emoji_count = async (emojiIndex) => {
         console.log(emojiIndex)
-        const response = await fetch(`http://localhost:3000/emoji_count_incrementation/${activityData.id}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({emoji: emojiIndex})
-        });
+        const response = await fetch(
+            `http://localhost:3000/emoji_count_incrementation/${activityData.id}`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({emoji: emojiIndex})
+            }
+        );
 
         const data = await response.json();
         console.log(data);
+        if (!data.isActive) {
+            toaster.warning('Activity has ended', {description: "Activity is no longer active"});
+            navigate("/")
+        }
     }
 
     const feedback = async (emojiIndex) => {
@@ -51,7 +61,7 @@ const Student = () => {
         } else {
             console.log(response.error)
         }
-    }
+    }   
 
     return (
         <>
