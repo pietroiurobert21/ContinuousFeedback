@@ -6,8 +6,9 @@ const port = 3000;
 // Database connection
 const User = require('./database/models/User.js');
 const Activity = require('./database/models/Activity.js');
-const e = require('express');
+const ActivityLog = require('./database/models/ActivityLog.js');
 User.hasMany(Activity, { foreignKey: 'userId' });
+Activity.hasMany(ActivityLog, { foreignKey: 'activityId' });
 
 // Error response handler
 const handleErrorResponse = (res, error, message) => { 
@@ -175,7 +176,7 @@ app.post('/login', async (req, res) => {
       const isMatch = await user.verifyPassword(password);  // Verify the password
       if (isMatch) {
 
-        const token = jwt.sign({id: user.dataValues.id}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({id: user.dataValues.id}, process.env.ACCESS_TOKEN_SECRET);
         res.status(200).json({ success: true, message: 'Authentication successful!', token: token });
       }
       else {
@@ -220,7 +221,7 @@ app.post('/emoji_count_incrementation/:id', async (req, res) => {
 
 
 // activate an activity
-app.post('/activate_activity/:id', async (req, res) => {
+app.put('/changeactivity/:id', async (req, res) => {
   const id = req.params.id;
   try {
     const activity = await Activity.findOne({ 
@@ -228,13 +229,47 @@ app.post('/activate_activity/:id', async (req, res) => {
         id: id
       }
     });
-    activity.isActive = true;
+    if (activity.isActive == true)
+      activity.isActive = false;
+    else
+      activity.isActive = true;
     await activity.save();
     res.status(200).json({message: "activity is active", activity}); 
   } catch (error) {
     handleErrorResponse(res, error, 'Activity not found')
   }
 })
+
+
+
+// ActivityLog
+
+app.get('/activitylog/:activityId', async (req, res) => {
+  const activityId = req.params.activityId;
+  try {
+    const activitylog = await ActivityLog.findAll({ 
+      where: { 
+        activityId: activityId
+      }
+    });
+    res.status(200).json(activitylog);
+  } catch (error) {
+    handleErrorResponse(res, error, 'Activity not found')
+  }
+})
+
+app.post('/activitylog/:activityId', async (req, res) => {
+  const activityId = req.params.activityId;
+  const date = req.body.date;
+  const emoji = req.body.emoji;
+  try {
+    const activitylog = await ActivityLog.create({activityId, date, emoji});
+    res.status(200).json(activitylog);
+  } catch (error) {
+    handleErrorResponse(res, error, 'Activity not found')
+  }
+})
+
 
 
 app.listen(port, () => {

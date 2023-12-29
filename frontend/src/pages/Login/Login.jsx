@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import style from './Login.module.css';
 import backgroundImg from '../../assets/background.jpg';
 
@@ -10,6 +10,12 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            navigate('/Teacher');
+        }
+    }, []);
 
     const login = async () => {
         const data = await fetch('http://localhost:3000/Login', {
