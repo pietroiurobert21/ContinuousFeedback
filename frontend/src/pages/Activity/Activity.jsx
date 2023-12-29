@@ -14,6 +14,7 @@ const Activity = () => {
         const token = localStorage.getItem('token');
         if (!token) {
             navigate('/Login');
+            toaster.danger('You must be logged in to access this page', { duration: 1.5 });
         }
     }, []);
 

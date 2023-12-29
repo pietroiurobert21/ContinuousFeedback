@@ -3,4 +3,16 @@
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 1rem;
     margin: 1rem 0;
+    width: 20vw;
+}
+
+.container {
+    width: 50vw;
+    margin: auto;
+    user-select: none;
+}
+
+.container p {
+    font-family: Roboto, sans-serif;
+    font-weight: 700;
 }

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react"
 import Emote from "../../components/Emote/Emote"
 import styles from './Student.module.css'
 
+import { toaster } from 'evergreen-ui'
+
 const Student = () => {
     const location = useLocation()
     const activityData = location.state.activityData
@@ -22,16 +24,28 @@ const Student = () => {
         console.log(data);
     }
 
+    const feedback = async (id) => {
+        increment_emoji_count(id)
+        toaster.closeAll()
+        toaster.success('feedback submited', {
+            description: 'Thank you for your feedback!',
+            duration: 1,
+            id: 'feedbacks_submission'
+        })
+    }
 
     return (
         <>
-        <p> {activityData.id}  {activityData.name} {activityData.code} </p>
+        <div className={styles.container}>
+            <p> ID: {activityData.id} </p>
+            <p> Name: {activityData.name} </p>
 
-        <div className={styles.emoteGrid}>
-            <div onClick={()=>{increment_emoji_count(1)}}> <Emote emote="😀" color="aliceblue"/> </div>
-            <div onClick={()=>{increment_emoji_count(2)}}> <Emote emote="🙁" color="aliceblue"/> </div>
-            <div onClick={()=>{increment_emoji_count(3)}}> <Emote emote="😲" color="aliceblue"/> </div>
-            <div onClick={()=>{increment_emoji_count(4)}}> <Emote emote="😵" color="aliceblue"/> </div>
+            <div className={styles.emoteGrid}>
+                <div onClick={()=>feedback(1)}> <Emote emote="😀" color="aliceblue"/> </div>
+                <div onClick={()=>feedback(2)}> <Emote emote="🙁" color="aliceblue"/> </div>
+                <div onClick={()=>feedback(3)}> <Emote emote="😲" color="aliceblue"/> </div>
+                <div onClick={()=>feedback(4)}> <Emote emote="😵" color="aliceblue"/> </div>
+            </div>
         </div>
         </>
     )

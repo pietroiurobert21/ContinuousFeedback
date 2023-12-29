@@ -220,7 +220,7 @@ app.post('/emoji_count_incrementation/:id', async (req, res) => {
 
 
 // activate an activity
-app.post('/activate_activity/:id', async (req, res) => {
+app.put('/changeactivity/:id', async (req, res) => {
   const id = req.params.id;
   try {
     const activity = await Activity.findOne({ 
@@ -228,7 +228,10 @@ app.post('/activate_activity/:id', async (req, res) => {
         id: id
       }
     });
-    activity.isActive = true;
+    if (activity.isActive == true)
+      activity.isActive = false;
+    else
+      activity.isActive = true;
     await activity.save();
     res.status(200).json({message: "activity is active", activity}); 
   } catch (error) {

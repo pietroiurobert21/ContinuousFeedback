@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Table, Menu, Popover, Position, Button, toaster, Combobox } from 'evergreen-ui'
+import { Table, Menu, Popover, Position, Button, toaster, Switch, majorScale } from 'evergreen-ui'
 
 import style from './Teacher.module.css';
 
 const Teacher = () => {
+    const [checked, setChecked] = useState(false);
+
     const [isLoading, setIsLoading] = useState(true);
     const [userData, setuserData] = useState();
     const [activities, setActivities] = useState([]);
@@ -15,6 +17,7 @@ const Teacher = () => {
     const logout = async () => {
         localStorage.removeItem('token');
         navigate('/Login');
+        toaster.success('Logged out successfully', { duration: 1.5 });
     }; 
 
     const retrieveUserData = async (token) => {
@@ -36,6 +39,8 @@ const Teacher = () => {
         setIsLoading(false);
         setuserData(data);
         console.log(data);
+
+        await retrieveActivities(token);
     };
 
     const retrieveActivities = async (token) => {
@@ -56,23 +61,30 @@ const Teacher = () => {
         console.log(data)
     };
 
-    const active_not_active = async(value) => {
-        if (value === 'true') {
-            // todo - change to true
+    const changeActivity = async (id) => {
+        const data = await fetch(`http://localhost:3000/changeactivity/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const response = await data.json();
+        if (data.status === 200) {
+            toaster.success('Activity changed successfully', { duration: 1.5 });
         } else {
-            // todo - change to false
+            toaster.danger('Error changing activity', { description: response.message, duration: 1.5 });
         }
-    }   
+    };
 
     useEffect(() => {
         const token = localStorage.getItem('token');
+        localStorage.removeItem('ID');
         if (!token) {
             navigate('/Login');
         } else {
             retrieveUserData(token);
-            retrieveActivities(token);
         }
-    }, []);
+    }, [checked]);
 
     return (
         <div className={style.teacherContainer}>
@@ -120,11 +132,10 @@ const Teacher = () => {
                                     <Table.TextCell>{activity.emoji_2_count}</Table.TextCell>
                                     <Table.TextCell>{activity.emoji_3_count}</Table.TextCell>
                                     <Table.TextCell>{activity.emoji_4_count}</Table.TextCell>
-                                    <Table.TextCell>
-                                        <Combobox width="8vw" height="auto" initialSelectedItem={activity.isActive.toString()} 
-                                            items={['true', 'false']} onChange={(selected) => {active_not_active(selected)}}
-                                        />
+                                    <Table.TextCell onClick={(e) => { e.stopPropagation()}}>
+                                        <Switch checked={activity.isActive} onChange={(e) => {changeActivity(activity.id); setChecked(!checked)}}/>
                                     </Table.TextCell>
+
                                  </Table.Row>
                             ))}
                         </Table.Body>
