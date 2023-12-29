@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Table, Menu, Popover, Position, Button, toaster, Switch, majorScale } from 'evergreen-ui'
+import { Table, Menu, Popover, Position, Button, toaster, Switch, majorScale, Tab } from 'evergreen-ui'
+import { EyeOpenIcon } from 'evergreen-ui'
+import { Pane, Dialog } from 'evergreen-ui'
 
 import style from './Teacher.module.css';
 
+
 const Teacher = () => {
+    const [isShown, setIsShown] = useState(false);
+    const [log, setLog] = useState([]);
+
     const [checked, setChecked] = useState(false);
 
     const [isLoading, setIsLoading] = useState(true);
@@ -76,6 +82,20 @@ const Teacher = () => {
         }
     };
 
+    const getLog = async (activityId) => {
+        const log = await fetch(`http://localhost:3000/activitylog/${activityId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        log.json().then(logData => {
+            setLog(logData);
+            console.log(logData);
+        });
+    }
+
+
     useEffect(() => {
         const token = localStorage.getItem('token');
         localStorage.removeItem('ID');
@@ -118,6 +138,7 @@ const Teacher = () => {
                             <Table.TextHeaderCell>EM3</Table.TextHeaderCell>
                             <Table.TextHeaderCell>EM4</Table.TextHeaderCell>
                             <Table.TextHeaderCell>ACTIVE</Table.TextHeaderCell>
+                            <Table.TextHeaderCell>LOGS</Table.TextHeaderCell>
                         </Table.Head>
                         <Table.Body height={240}>
                             {activities.map((activity, index) => (
@@ -133,11 +154,25 @@ const Teacher = () => {
                                     <Table.TextCell>{activity.emoji_3_count}</Table.TextCell>
                                     <Table.TextCell>{activity.emoji_4_count}</Table.TextCell>
                                     <Table.TextCell onClick={(e) => { e.stopPropagation()}}>
-                                        <Switch checked={activity.isActive} onChange={(e) => {changeActivity(activity.id); setChecked(!checked)}}/>
+                                        <Switch checked={activity.isActive} onChange={(e) => {changeActivity(activity.id); setChecked(!checked); localStorage.setItem("activityID", activity.id)}}/>
+                                    </Table.TextCell>
+
+                                    <Table.TextCell onClick={(e) => { e.stopPropagation();}}> 
+                                        <Button style={{width:"3rem", padding:"0"}}appearance="minimal" onClick={() => {setIsShown(true); getLog(activity.id)}}> <EyeOpenIcon/> </Button>
                                     </Table.TextCell>
 
                                  </Table.Row>
                             ))}
+                                    <Dialog isShown={isShown} title="Activity log" onCloseComplete={() => setIsShown(false)} confirmLabel="Close" hasFooter={false}>
+                                        <Pane height="auto">
+                                            { log.length === 0 && <p> No logs yet </p>}
+                                            {log.map((log, index) => (
+                                                <p key={index}> 
+                                               {log.date.split('T')[0]} {log.date.split('T')[1].split('.')[0]} {log.emoji === 1 && '😀'} {log.emoji === 2 && '🙁'} {log.emoji === 3 && '😲'} {log.emoji === 4 && '😵'}
+                                                </p>
+                                            ))}
+                                        </Pane>
+                                    </Dialog>
                         </Table.Body>
                      </Table>
                     

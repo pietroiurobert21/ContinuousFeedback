@@ -24,14 +24,33 @@ const Student = () => {
         console.log(data);
     }
 
-    const feedback = async (id) => {
-        increment_emoji_count(id)
+    const feedback = async (emojiIndex) => {
+        increment_emoji_count(emojiIndex)
         toaster.closeAll()
         toaster.success('feedback submited', {
             description: 'Thank you for your feedback!',
             duration: 1,
             id: 'feedbacks_submission'
         })
+        feedbackLog(emojiIndex)
+    }
+
+    const feedbackLog = async (emojiIndex) => { 
+        const currentDate = new Date()
+
+        const data = await fetch(`http://localhost:3000/activitylog/${activityData.id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({date: currentDate,emoji: emojiIndex})
+        });
+        const response = await data.json()
+        if (data.status === 200) {
+            console.log(response)
+        } else {
+            console.log(response.error)
+        }
     }
 
     return (
