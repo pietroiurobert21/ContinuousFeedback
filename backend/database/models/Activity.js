@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const sequelize = require('../db.js');
 const { DataTypes } = require('sequelize');
 const User = require('./User.js');
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require('uuid'); // genereaza id unic random
 
 const Activity = sequelize.define('Activity', {
     id: {
